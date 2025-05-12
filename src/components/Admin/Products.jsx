@@ -224,6 +224,7 @@ const handleDeleteProduct = async () => {
           key={product._id}
           className="transition-colors hover:bg-blue-50/70 focus-within:bg-blue-100"
         >
+          {console.log('products images',product.images[0])}
           <TableCell>
             <img
               src={`${import.meta.env.VITE_API_URL}/${product.images?.[0] || "placeholder.jpg"}`}
