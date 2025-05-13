@@ -86,7 +86,7 @@ const CustomerProductById = () => {
 
           {images.length > 1 && (
             <div className="flex mt-4 gap-3 overflow-x-auto pb-1">
-              {images.map((img, idx) => (
+              {images?.map((img, idx) => (
                 <div
                   key={idx}
                   onClick={() => setSelectedImage(img)}
@@ -110,16 +110,16 @@ const CustomerProductById = () => {
         {/* Right: Product Details */}
         <div className="flex flex-col justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-deep-green">{product.name}</h1>
-            <p className="text-sm text-slate-green mt-2">{product.description}</p>
+            <h1 className="text-3xl font-bold text-deep-green">{product?.name}</h1>
+            <p className="text-sm text-slate-green mt-2">{product?.description}</p>
 
             <div className="mt-4 space-y-1 text-stark-white-700">
-              <p><span className="font-semibold">Category:</span> {product.category}</p>
-              <p><span className="font-semibold">Sub Category:</span> {product.subCategory}</p>
-              <p><span className="font-semibold">Stock:</span> {product.stockQuantity}</p>
+              <p><span className="font-semibold">Category:</span> {product?.category}</p>
+              <p><span className="font-semibold">Sub Category:</span> {product?.subCategory}</p>
+              <p><span className="font-semibold">Stock:</span> {product?.stockQuantity}</p>
               <p>
                 <span className="font-semibold">Availability:</span>{' '}
-                {product.isAvailable ? (
+                {product?.isAvailable ? (
                   <span className="text-green-600 font-medium">In Stock</span>
                 ) : (
                   <span className="text-red-600 font-medium">Out of Stock</span>
@@ -131,11 +131,11 @@ const CustomerProductById = () => {
           <div className="mt-6">
             <div className="flex items-center gap-4">
               <span className="text-2xl font-bold text-stark-white-700">
-              ₹{product.price}
+              ₹{product?.price}
               </span>
-              {product.discount > 0 && (
+              {product?.discount > 0 && (
                 <span className="text-sm font-semibold text-stark-white-600">
-                  -{product.discount}% OFF
+                  -{product?.discount}% OFF
                 </span>
               )}
             </div>
