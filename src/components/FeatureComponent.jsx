@@ -104,11 +104,11 @@ const FeaturedProducts = () => {
                   <div className="mt-auto pt-3 flex justify-between items-center">
                     <div className="flex flex-col">
                       <span className="text-base font-bold text-[color:var(--color-stark-white-700)]">
-                        ${discountedPrice}
+                      ₹{discountedPrice}
                       </span>
                       {hasDiscount && (
                         <span className="text-sm line-through text-gray-500">
-                          ${product?.price?.toFixed(2)}
+                          ₹{product?.price?.toFixed(2)}
                         </span>
                       )}
                     </div>

@@ -256,10 +256,10 @@ const Dashboard = () => {
               <div className="flex-1">
                 <p className="font-medium text-deep-green">{order?.userId?.name || 'Guest'}</p>
                 <p className="text-sm text-slate-green line-clamp-2">
-                  {order.message}
+                  {order?.message}
                 </p>
                 <p className="text-xs text-slate-green mt-1">
-                  {order.createdAt && format(new Date(order.createdAt), "MMM dd, yyyy h:mm a")}
+                  {order?.createdAt && format(new Date(order.createdAt), "MMM dd, yyyy h:mm a")}
                 </p>
               </div>
               <div className="flex gap-2">
@@ -329,7 +329,7 @@ const SummaryCard = ({
   };
 
   return (
-    <Card className="border-sea-green bg-sky-100 border-2">
+    <Card className="border-sea-green bg-slate-100 border-2">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <CardTitle className="text-sm font-medium text-deep-green">
           {title}

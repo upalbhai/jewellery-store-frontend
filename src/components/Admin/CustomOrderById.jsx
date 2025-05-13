@@ -39,14 +39,14 @@ const CustomOrderById = () => {
     return (
       <div className="container mx-auto py-8 max-w-4xl">
         <div className="flex flex-col items-center justify-center space-y-4">
-          <Skeleton className="h-12 w-12 rounded-full" />
+          <Skeleton className="bg-slate-300 h-12 w-12 rounded-full" />
           <div className="space-y-2 text-center">
-            <Skeleton className="h-6 w-[250px]" />
-            <Skeleton className="h-4 w-[200px]" />
+            <Skeleton className="bg-slate-300 h-6 w-[250px]" />
+            <Skeleton className="bg-slate-300 h-4 w-[200px]" />
           </div>
           <div className="grid grid-cols-3 gap-4 w-full mt-6">
             {[...Array(6)].map((_, i) => (
-              <Skeleton key={i} className="h-32 w-full rounded-lg" />
+              <Skeleton key={i} className="bg-slate-400 h-32 w-full rounded-lg" />
             ))}
           </div>
         </div>

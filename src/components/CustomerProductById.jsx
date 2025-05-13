@@ -131,7 +131,7 @@ const CustomerProductById = () => {
           <div className="mt-6">
             <div className="flex items-center gap-4">
               <span className="text-2xl font-bold text-stark-white-700">
-                ${product.price}
+              ₹{product.price}
               </span>
               {product.discount > 0 && (
                 <span className="text-sm font-semibold text-stark-white-600">

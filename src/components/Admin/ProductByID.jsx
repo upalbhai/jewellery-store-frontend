@@ -170,7 +170,7 @@ const ProductByID = () => {
                       </Badge>
                     </>
                   ) : (
-                    <span className="text-lg font-bold">${product?.price}</span>
+                    <span className="text-lg font-bold">₹{product?.price}</span>
                   )}
                 </div>
               </div>

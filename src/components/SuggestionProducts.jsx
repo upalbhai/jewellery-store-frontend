@@ -50,13 +50,13 @@ const SuggestionProducts = ({ productId }) => {
             <Card key={product._id} className="hover:shadow-lg transition">
               <Link to={`/product/${product._id}`}>
                 <img
-                  src={`${import.meta.env.VITE_API_URL}/${product.images[0]}` || '/placeholder.jpg'}
-                  alt={product.name}
+                  src={`${import.meta.env.VITE_API_URL}/${product?.images[0]}` || '/placeholder.jpg'}
+                  alt={product?.name}
                   className="w-full h-40 object-cover rounded-t"
                 />
                 <CardContent className="p-3">
-                  <h3 className="text-md font-medium">{product.name}</h3>
-                  <p className="text-sm text-gray-500">${product.price}</p>
+                  <h3 className="text-md font-medium">{product?.name}</h3>
+                  <p className="text-sm text-gray-500">₹{product?.price}</p>
                 </CardContent>
               </Link>
             </Card>
