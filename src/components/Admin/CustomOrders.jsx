@@ -79,7 +79,7 @@ const CustomOrders = () => {
                   <TableRow>
                     <TableCell colSpan={4} className="text-center">
                       {Array.from({ length: 5 }).map((_, i) => (
-                        <Skeleton key={i} className="h-12 w-full my-2" />
+                        <Skeleton key={i} className="h-12 w-full my-2 bg-slate-300" />
                       ))}
                     </TableCell>
                   </TableRow>

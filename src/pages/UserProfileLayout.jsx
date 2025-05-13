@@ -60,7 +60,7 @@ const UserProfileLayout = () => {
             ))
           ) : (
             Array.from({ length: 5 }).map((_, i) => (
-              <Skeleton  key={i} className="bg-gray-400 h-10 w-full rounded-md" />
+              <Skeleton key={i} className="h-10 w-full rounded-md" />
             ))
           )}
         </nav>
@@ -77,14 +77,14 @@ const UserProfileLayout = () => {
             {user?.name ? (
               <h1 className="text-xl font-semibold">Welcome, {user.name}</h1>
             ) : (
-              <Skeleton className="bg-gray-400 h-6 w-40 rounded-md" />
+              <Skeleton className="h-6 w-40 rounded-md" />
             )}
           </div>
         </header>
 
         {/* Outlet for routed content */}
         <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-off-white">
-          {user ? <Outlet /> : <Skeleton className="bg-gray-400 h-[500px] w-full rounded-md" />}
+          {user ? <Outlet /> : <Skeleton className="h-[500px] w-full rounded-md" />}
         </main>
       </div>
     </div>

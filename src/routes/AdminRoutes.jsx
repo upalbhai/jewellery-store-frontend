@@ -1,18 +1,19 @@
-import CustomerById from '@/components/Admin/CustomerById';
-import Customers from '@/components/Admin/Customers';
-import CustomOrderById from '@/components/Admin/CustomOrderById';
-import CustomOrders from '@/components/Admin/CustomOrders';
-import OrderById from '@/components/Admin/OrderById';
-import ProductByID from '@/components/Admin/ProductByID';
-import StylishLoader from '@/components/StylishLoader';
+import AdminSkeleton from '@/components/AdminSkeleton';
 import React, { Suspense, lazy } from 'react';
 import { useSelector } from 'react-redux';
 import { Navigate, Route, Routes } from 'react-router-dom';
 
+// Lazy-loaded components
 const Admin = lazy(() => import('@/pages/Admin'));
 const Dashboard = lazy(() => import('@/components/Admin/Dashboard'));
 const Products = lazy(() => import('@/components/Admin/Products'));
 const Orders = lazy(() => import('@/components/Admin/Orders'));
+const Customers = lazy(() => import('@/components/Admin/Customers'));
+const CustomerById = lazy(() => import('@/components/Admin/CustomerById'));
+const ProductByID = lazy(() => import('@/components/Admin/ProductByID'));
+const CustomOrders = lazy(() => import('@/components/Admin/CustomOrders'));
+const CustomOrderById = lazy(() => import('@/components/Admin/CustomOrderById'));
+const OrderById = lazy(() => import('@/components/Admin/OrderById'));
 
 const AdminRoutes = () => {
   const { user } = useSelector((state) => state.auth);
@@ -22,12 +23,11 @@ const AdminRoutes = () => {
   }
 
   return (
-    <Suspense fallback={<StylishLoader />}>
+    <Suspense fallback={<AdminSkeleton />}>
       <Routes>
         <Route path="/" element={<Admin />}>
           <Route index element={<Dashboard />} />
           <Route path="products" element={<Products />} />
-          {/* <Route path="custom-order" element={<Customers />} /> */}
           <Route path="customers" element={<Customers />} />
           <Route path="customer/:id" element={<CustomerById />} />
           <Route path="product/:id" element={<ProductByID />} />

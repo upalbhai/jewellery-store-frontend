@@ -13,9 +13,9 @@ const ProcessOrder = () => {
   const [totalAmount, setTotalAmount] = useState(0);
   const [orderDetails, setOrderDetails] = useState(null);
   const [isRetry, setIsRetry] = useState(false);
-  const [isVerifyingPayment, setIsVerifyingPayment] = useState(false); // New state for verification loading
+  const [isVerifyingPayment, setIsVerifyingPayment] = useState(false);
 
-  // Load Razorpay script when component mounts
+  // Load Razorpay script
   useEffect(() => {
     const script = document.createElement('script');
     script.src = 'https://checkout.razorpay.com/v1/checkout.js';
@@ -27,8 +27,8 @@ const ProcessOrder = () => {
     };
   }, []);
 
-  // Fetch order details if this is a retry
-  useQuery({
+  // Fetch order details only if orderId exists (retry scenario)
+  const { isLoading: isFetchingOrder } = useQuery({
     queryKey: ['order', orderId],
     queryFn: () => getOrderByIdForShop(orderId),
     enabled: !!orderId,
@@ -37,7 +37,7 @@ const ProcessOrder = () => {
         setIsRetry(true);
         setOrderDetails(data.data);
         setOrderSummary(data.data.products);
-        setTotalAmount(data.data.totalAmount);
+        calculateTotalAmount(data.data.products);
       }
     },
     onError: () => {
@@ -45,6 +45,26 @@ const ProcessOrder = () => {
       navigate('/profile/orders');
     }
   });
+
+  // Calculate total amount with discounts
+  const calculateTotalAmount = (items) => {
+    const total = items.reduce((acc, item) => {
+      const product = item.productId || item; // Handle both populated and unpopulated products
+      const price = product.price || 0;
+      const discount = product.discount || 0;
+      const discountedPrice = price - (price * discount / 100);
+      return acc + (item.quantity * discountedPrice);
+    }, 0);
+    setTotalAmount(total);
+  };
+
+  // Set initial order data if coming from cart (new order scenario)
+  useEffect(() => {
+    if (state?.cartData && !orderId) {
+      setOrderSummary(state.cartData);
+      calculateTotalAmount(state.cartData);
+    }
+  }, [state?.cartData, orderId]);
 
   // Initialize payment handler
   const initializePayment = async (razorpayOrder, orderData) => {
@@ -58,12 +78,12 @@ const ProcessOrder = () => {
       amount: razorpayOrder.amount.toString(),
       currency: razorpayOrder.currency,
       order_id: razorpayOrder.id,
-      name: 'My Jewelry Store',
+      name: 'Madhusudhan Ratnam',
       description: `Payment for your order`,
       image: '/logo.png',
       handler: async (response) => {
         try {
-          setIsVerifyingPayment(true); // Start verification loading
+          setIsVerifyingPayment(true);
           const paymentResponse = await verifyPayment({
             razorpay_order_id: response.razorpay_order_id,
             razorpay_payment_id: response.razorpay_payment_id,
@@ -81,7 +101,7 @@ const ProcessOrder = () => {
           toast.error('Error verifying payment');
           console.error('Payment verification error:', error);
         } finally {
-          setIsVerifyingPayment(false); // End verification loading
+          setIsVerifyingPayment(false);
         }
       },
       prefill: {
@@ -94,7 +114,7 @@ const ProcessOrder = () => {
       },
       modal: {
         ondismiss: () => {
-          setIsVerifyingPayment(false); // Ensure loading is stopped if modal is dismissed
+          setIsVerifyingPayment(false);
           toast('Payment window closed', { icon: 'ℹ️' });
         }
       }
@@ -110,7 +130,7 @@ const ProcessOrder = () => {
     }
   };
 
-  // Create payment intent mutation
+  // Create payment intent mutation (for new orders)
   const { mutate: createOrderMutation, isLoading: isCreatingIntent } = useMutation({
     mutationFn: createOrder,
     onSuccess: (data) => {
@@ -122,7 +142,7 @@ const ProcessOrder = () => {
     },
   });
 
-  // Retry payment mutation
+  // Retry payment mutation (for existing orders)
   const { mutate: retryOrderPaymentMutation, isLoading: isRetrying } = useMutation({
     mutationFn: retryOrderPayment,
     onSuccess: (data) => {
@@ -159,18 +179,8 @@ const ProcessOrder = () => {
     }
   };
 
-  // Set initial order data if coming from cart
-  useEffect(() => {
-    if (state?.cartData && !orderId) {
-      const cart = state.cartData;
-      setOrderSummary(cart);
-      const total = cart.reduce((acc, item) => acc + item.quantity * item.productId.price, 0);
-      setTotalAmount(total);
-    }
-  }, [state?.cartData, orderId]);
-
   // Combined loading state
-  const isLoading = isCreatingIntent || isRetrying || isVerifyingPayment;
+  const isLoading = isFetchingOrder || isCreatingIntent || isRetrying || isVerifyingPayment;
 
   return (
     <div className="max-w-3xl mx-auto py-10 px-4">
@@ -190,26 +200,46 @@ const ProcessOrder = () => {
       )}
 
       <div className="space-y-4 mb-6">
-        {orderSummary?.map((item, index) => (
-          <div key={index} className="flex justify-between py-2 border-b">
-            <div className="flex items-center gap-3">
-              {item.productId?.images?.[0] && (
-                <img 
-                  src={`${import.meta.env.VITE_API_URL}/${item.productId.images[0]}`}
-                  alt={item.productId.name}
-                  className="w-12 h-12 object-cover rounded"
-                  onError={(e) => {
-                    e.target.src = '/placeholder-product.png';
-                  }}
-                />
-              )}
-              <div>{item.productId?.name || 'Product'}</div>
+        {orderSummary?.map((item, index) => {
+          const product = item.productId || item; // Handle both populated and unpopulated products
+          const price = product.price || 0;
+          const discount = product.discount || 0;
+          const discountedPrice = price - (price * discount / 100);
+          
+          return (
+            <div key={index} className="flex justify-between py-2 border-b">
+              <div className="flex items-center gap-3">
+                {product.images?.[0] && (
+                  <img 
+                    src={`${import.meta.env.VITE_API_URL}/${product.images[0]}`}
+                    alt={product.name}
+                    className="w-12 h-12 object-cover rounded"
+                    onError={(e) => {
+                      e.target.src = '/placeholder-product.png';
+                    }}
+                  />
+                )}
+                <div>
+                  <div>{product.name || 'Product'}</div>
+                  <div className="text-sm text-gray-600">
+                    {discount > 0 ? (
+                      <>
+                        <span className="text-gray-900">₹{discountedPrice.toFixed(2)}</span>
+                        <span className="ml-2 line-through">₹{price.toFixed(2)}</span>
+                        <span className="ml-2 text-green-600">({discount}% OFF)</span>
+                      </>
+                    ) : (
+                      <span>₹{price.toFixed(2)}</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className="font-medium">
+                {item.quantity} × ₹{discountedPrice.toFixed(2)}
+              </div>
             </div>
-            <div className="font-medium">
-              {item.quantity} × ₹{item.productId?.price || '0'}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <div className="flex justify-between py-4 border-t border-b mb-6">

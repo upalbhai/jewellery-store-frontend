@@ -19,6 +19,7 @@ import toast from 'react-hot-toast';
 import { Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
+import { Skeleton } from '../ui/skeleton';
 
 const Products = () => {
   const [products, setProducts] = useState([]);
@@ -198,81 +199,110 @@ const handleDeleteProduct = async () => {
       <div className="text-sm text-gray-600">
         Total Products: {totalProducts} | Page {page} of {totalPages}
       </div>
-
-      {loading ? (
-        <StylishLoader />
-      ) : products.length === 0 ? (
-        <p className="text-center text-gray-500">No products found</p>
-      ) : (
-        <div className="overflow-x-auto rounded-xl shadow-lg border border-gray-200 bg-white">
-  <Table >
-    <TableHeader className="bg-pale-teal">
-      <TableRow>
-        <TableHead className="w-16 p-4">Image</TableHead>
-        <TableHead>Name</TableHead>
-        <TableHead>Category</TableHead>
-        <TableHead>Price</TableHead>
-        <TableHead>Stock</TableHead>
-        <TableHead>Availability</TableHead>
-        <TableHead className="w-12">Edit</TableHead>
-        <TableHead className="w-12">Delete</TableHead>
-      </TableRow>
-    </TableHeader>
-    <TableBody>
-      {products.map((product) => (
-        <TableRow
-          key={product._id}
-          className="transition-colors hover:bg-blue-50/70 focus-within:bg-blue-100"
-        >
-          {console.log('products images',product.images[0])}
-          <TableCell>
-            <img
-              src={`${import.meta.env.VITE_API_URL}/${product.images?.[0] || "placeholder.jpg"}`}
-              alt={product?.name}
-              className="h-12 w-12 object-cover rounded-md border border-gray-200 shadow-sm"
-            />
-          </TableCell>
-          <TableCell
-            onClick={() => navigate(`/admin/product/${product?._id}`)}
-            className="cursor-pointer font-medium text-blue-700 hover:underline transition"
-          >
-            {product?.name}
-          </TableCell>
-          <TableCell className="text-gray-600">{product?.category}</TableCell>
-          <TableCell className="font-semibold text-gray-800">₹{product?.price}</TableCell>
-          <TableCell className="text-center">{product?.stockQuantity}</TableCell>
-          <TableCell>
-            <span
-              className={`inline-block min-w-[90px] text-center px-3 py-1 rounded-full text-xs font-semibold transition ${
-                product.isAvailable
-                  ? "bg-green-100 text-green-700"
-                  : "bg-red-100 text-red-700"
-              }`}
-            >
-              {product.isAvailable ? "In Stock" : "Out of Stock"}
-            </span>
-          </TableCell>
-          <TableCell>
-            <FaEdit
-              onClick={() => openEditModal(product)}
-              className="text-blue-500 hover:text-blue-700 cursor-pointer text-xl transition"
-              title="Edit"
-            />
-          </TableCell>
-          <TableCell>
-            <FaTrash
-              onClick={() => openDeleteModal(product)}
-              className="text-red-500 hover:text-red-700 cursor-pointer text-xl transition"
-              title="Delete"
-            />
-          </TableCell>
+      <div className="overflow-x-auto rounded-xl shadow-lg border border-gray-200 bg-white">
+    <Table>
+      <TableHeader className="bg-pale-teal">
+        <TableRow>
+          <TableHead className="w-16 p-4">Image</TableHead>
+          <TableHead>Name</TableHead>
+          <TableHead>Category</TableHead>
+          <TableHead>Price</TableHead>
+          <TableHead>Stock</TableHead>
+          <TableHead>Availability</TableHead>
+          <TableHead className="w-12">Edit</TableHead>
+          <TableHead className="w-12">Delete</TableHead>
         </TableRow>
-      ))}
-    </TableBody>
-  </Table>
-</div>
+      </TableHeader>
+      <TableBody>
+        {loading ? (
+          [...Array(6)].map((_, index) => (
+            <TableRow key={index}>
+              <TableCell>
+                <Skeleton className="h-12 w-12 rounded-md bg-gray-400" />
+              </TableCell>
+              <TableCell>
+                <Skeleton className="h-4 w-24 rounded bg-gray-400" />
+              </TableCell>
+              <TableCell>
+                <Skeleton className="h-4 w-20 rounded bg-gray-400" />
+              </TableCell>
+              <TableCell>
+                <Skeleton className="h-4 w-16 rounded bg-gray-400" />
+              </TableCell>
+              <TableCell>
+                <Skeleton className="h-4 w-10 mx-auto rounded bg-gray-400" />
+              </TableCell>
+              <TableCell>
+                <Skeleton className="h-6 w-24 mx-auto rounded-full bg-gray-400" />
+              </TableCell>
+              <TableCell>
+                <Skeleton className="h-5 w-5 mx-auto rounded bg-gray-400" />
+              </TableCell>
+              <TableCell>
+                <Skeleton className="h-5 w-5 mx-auto rounded bg-gray-400" />
+              </TableCell>
+            </TableRow>
+          ))
+        ) : products.length === 0 ? (
+          <TableRow>
+            <TableCell colSpan={8} className="text-center py-8 text-gray-500">
+              No products found
+            </TableCell>
+          </TableRow>
+        ) : (
+          products.map((product) => (
+            <TableRow
+              key={product._id}
+              className="transition-colors hover:bg-blue-50/70 focus-within:bg-blue-100"
+            >
+              <TableCell>
+                <img
+                  src={`${import.meta.env.VITE_API_URL}/${product.images?.[0] || "placeholder.jpg"}`}
+                  alt={product?.name}
+                  className="h-12 w-12 object-cover rounded-md border border-gray-200 shadow-sm"
+                />
+              </TableCell>
+              <TableCell
+                onClick={() => navigate(`/admin/product/${product?._id}`)}
+                className="cursor-pointer font-medium text-blue-700 hover:underline transition"
+              >
+                {product?.name}
+              </TableCell>
+              <TableCell className="text-gray-600">{product?.category}</TableCell>
+              <TableCell className="font-semibold text-gray-800">₹{product?.price}</TableCell>
+              <TableCell className="text-center">{product?.stockQuantity}</TableCell>
+              <TableCell>
+                <span
+                  className={`inline-block min-w-[90px] text-center px-3 py-1 rounded-full text-xs font-semibold transition ${
+                    product.isAvailable
+                      ? "bg-green-100 text-green-700"
+                      : "bg-red-100 text-red-700"
+                  }`}
+                >
+                  {product.isAvailable ? "In Stock" : "Out of Stock"}
+                </span>
+              </TableCell>
+              <TableCell>
+                <FaEdit
+                  onClick={() => openEditModal(product)}
+                  className="text-blue-500 hover:text-blue-700 cursor-pointer text-xl transition"
+                  title="Edit"
+                />
+              </TableCell>
+              <TableCell>
+                <FaTrash
+                  onClick={() => openDeleteModal(product)}
+                  className="text-red-500 hover:text-red-700 cursor-pointer text-xl transition"
+                  title="Delete"
+                />
+              </TableCell>
+            </TableRow>
+          ))
+        )}
+      </TableBody>
+    </Table>
+  </div>
 
-      )}
 
 {deleteProductData && (
   <AlertDialog open={showDeleteModal} onOpenChange={setShowDeleteModal}>

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { getSuggesstedProduct } from '@/core/requests';
-import { Card, CardContent } from '@/components/ui/card'; // Assuming you're using this
-import { Link } from 'react-router-dom'; // Optional if you want to link to product detail
+import { Card, CardContent } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton'; // ✅ Import Skeleton
+import { Link } from 'react-router-dom';
 
 const SuggestionProducts = ({ productId }) => {
   const [suggestedProducts, setSuggestedProducts] = useState([]);
@@ -30,7 +31,17 @@ const SuggestionProducts = ({ productId }) => {
       <h2 className="text-lg font-semibold mb-4">You Might Also Like</h2>
 
       {loading ? (
-        <div>Loading...</div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+          {Array.from({ length: 4 }).map((_, index) => (
+            <Card className='border-0' key={index}>
+              <Skeleton className="w-full h-40 rounded-t bg-slate-300" />
+              <CardContent className="p-3">
+                <Skeleton className="h-4 w-3/4 mb-2 bg-slate-400" />
+                <Skeleton className="h-4 w-1/3 bg-slate-400" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       ) : suggestedProducts.length === 0 ? (
         <p>No suggestions available.</p>
       ) : (

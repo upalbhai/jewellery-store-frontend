@@ -14,6 +14,7 @@ import { debounce } from 'lodash';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
 import { useNavigate } from 'react-router-dom';
+import { Skeleton } from '../ui/skeleton';
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -226,12 +227,7 @@ const Orders = () => {
   Total Orders: {totalOrders} | Showing page {page} of {totalPages}
 </div>
 
-{loading ? (
-  <p className="text-center text-stark-white-500">Loading...</p>
-) : orders?.length === 0 ? (
-  <p className="text-center text-stark-white-500">No orders found</p>
-) : (
-  <div className="overflow-x-auto rounded-lg border border-stark-white-200 shadow">
+<div className="overflow-x-auto rounded-lg border border-stark-white-200 shadow">
     <Table>
       <TableHeader className="bg-pale-teal text-deep-green">
         <TableRow>
@@ -244,32 +240,52 @@ const Orders = () => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {orders?.map((order) => (
-          <TableRow key={order._id} className="hover:bg-stark-white-50 transition">
-            <TableCell onClick={()=>navigate(`/admin/order/${order._id}`)}>{order._id}</TableCell>
-            <TableCell>{order?.userId?.name || '-'}</TableCell>
-            <TableCell>{order?.userId?.email || '-'}</TableCell>
-            <TableCell className={
-              order?.status === 'delivered'
-                ? 'text-green-600'
-                : order?.status === 'cancelled'
-                ? 'text-red-600'
-                : 'text-yellow-600'
-            }>
-              {order?.status}
-            </TableCell>
-            <TableCell className="capitalize">
-              {order?.paymentMethod.replace(/_/g, ' ')}
-            </TableCell>
-            <TableCell>
-              {new Date(order?.createdAt).toLocaleDateString()}
+        {loading ? (
+          [...Array(5)].map((_, index) => (
+            <TableRow key={`skeleton-${index}`} className="hover:bg-stark-white-50 transition">
+              <TableCell><Skeleton className="h-4 w-32 bg-gray-400" /></TableCell>
+              <TableCell><Skeleton className="h-4 w-24 bg-gray-400" /></TableCell>
+              <TableCell><Skeleton className="h-4 w-32 bg-gray-400" /></TableCell>
+              <TableCell><Skeleton className="h-4 w-20 bg-gray-400" /></TableCell>
+              <TableCell><Skeleton className="h-4 w-24 bg-gray-400" /></TableCell>
+              <TableCell><Skeleton className="h-4 w-24 bg-gray-400" /></TableCell>
+            </TableRow>
+          ))
+        ) : orders?.length === 0 ? (
+          <TableRow>
+            <TableCell colSpan={6} className="text-center py-8 text-stark-white-500">
+              No orders found
             </TableCell>
           </TableRow>
-        ))}
+        ) : (
+          orders?.map((order) => (
+            <TableRow key={order._id} className="hover:bg-stark-white-50 transition">
+              <TableCell onClick={()=>navigate(`/admin/order/${order._id}`)} className="cursor-pointer">
+                {order._id}
+              </TableCell>
+              <TableCell>{order?.userId?.name || '-'}</TableCell>
+              <TableCell>{order?.userId?.email || '-'}</TableCell>
+              <TableCell className={
+                order?.status === 'delivered'
+                  ? 'text-green-600'
+                  : order?.status === 'cancelled'
+                  ? 'text-red-600'
+                  : 'text-yellow-600'
+              }>
+                {order?.status}
+              </TableCell>
+              <TableCell className="capitalize">
+                {order?.paymentMethod?.replace(/_/g, ' ') || '-'}
+              </TableCell>
+              <TableCell>
+                {order?.createdAt ? new Date(order.createdAt).toLocaleDateString() : '-'}
+              </TableCell>
+            </TableRow>
+          ))
+        )}
       </TableBody>
     </Table>
   </div>
-)}
 
       {/* ShadCN Pagination */}
       {totalPages > 1 && (

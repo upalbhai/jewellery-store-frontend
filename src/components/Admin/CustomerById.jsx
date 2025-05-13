@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { getUserByIdForAdmin, updatePremiumStatus } from '@/core/requests';
 import toast from 'react-hot-toast';
+import { Skeleton } from '../ui/skeleton';
 
 const CustomerById = () => {
   const { id } = useParams();
@@ -51,7 +52,23 @@ const CustomerById = () => {
     mutation.mutate();
   };
 
-  if (isLoading) return <p>Loading user info...</p>;
+  if (isLoading) {
+    return (
+      <div className="p-6 max-w-xl mx-auto space-y-6 bg-white rounded shadow">
+        <Skeleton className="h-8 w-48 bg-slate-300 rounded" />
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-64 bg-slate-400 rounded" />
+          <Skeleton className="h-4 w-64 bg-slate-400 rounded" />
+          <Skeleton className="h-4 w-64 bg-slate-400 rounded" />
+        </div>
+        <div className="space-y-4 mt-6">
+          <Skeleton className="h-5 w-32 bg-slate-400 rounded" />
+          <Skeleton className="h-10 w-24 bg-slate-400 rounded" />
+          <Skeleton className="h-10 w-32 bg-slate-400 rounded" />
+        </div>
+      </div>
+    );
+  }
 
   const user = data?.data;
 

@@ -6,6 +6,7 @@ import { FiTrash } from 'react-icons/fi';
 import { getCartItems, removeCartItems } from '@/core/requests';
 import { removeFromCart } from '@/features/auth/authSlice';
 import { useNavigate } from 'react-router-dom';
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Cart = () => {
   const dispatch = useDispatch();
@@ -23,7 +24,6 @@ const Cart = () => {
     },
   });
 
-  // Initialize quantities with product quantities when data loads
   useEffect(() => {
     if (data?.data) {
       const initialQuantities = {};
@@ -93,7 +93,35 @@ const Cart = () => {
     navigate('/process-order', { state: { cartData: updatedCart } });
   };
 
-  if (isLoading) return <div className="text-center py-10">Loading cart...</div>;
+  // Skeleton loading component for cart items
+  const CartItemSkeleton = () => (
+    <div className="flex items-center justify-between p-4 border rounded-lg shadow-sm bg-white">
+      <div className="flex items-center gap-4">
+        <Skeleton className="w-16 h-16 rounded-md bg-gray-400" />
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-40 bg-gray-400" />
+          <Skeleton className="h-4 w-32 bg-gray-400" />
+          <Skeleton className="h-8 w-20 bg-gray-400" />
+        </div>
+      </div>
+      <Skeleton className="w-6 h-6 rounded-full bg-gray-400" />
+    </div>
+  );
+
+  if (isLoading) return (
+    <div className="max-w-4xl mx-auto py-10">
+      <Skeleton className="h-8 w-48 mb-6 bg-gray-400" />
+      <div className="space-y-4">
+        {[...Array(3)].map((_, index) => (
+          <CartItemSkeleton key={index} />
+        ))}
+      </div>
+      <div className="mt-6 flex justify-end">
+        <Skeleton className="h-10 w-40 bg-gray-400" />
+      </div>
+    </div>
+  );
+
   if (isError) return <div className="text-center py-10 text-red-500">Failed to load cart</div>;
 
   return (
@@ -110,14 +138,32 @@ const Cart = () => {
                 className="flex items-center justify-between p-4 border rounded-lg shadow-sm bg-white"
               >
                 <div className="flex items-center gap-4">
-                  <img
-                    src={`${import.meta.env.VITE_API_URL}/${item?.productId?.images[0]}` || '/placeholder.jpg'}
-                    alt={item?.productId?.name}
-                    className="w-16 h-16 object-cover rounded-md"
-                  />
+                  {item?.productId?.images?.[0] ? (
+                    <img
+                      src={`${import.meta.env.VITE_API_URL}/${item.productId.images[0]}`}
+                      alt={item?.productId?.name}
+                      className="w-16 h-16 object-cover rounded-md"
+                    />
+                  ) : (
+                    <Skeleton className="w-16 h-16 rounded-md bg-gray-400" />
+                  )}
                   <div>
-                    <h4 className="text-lg font-medium">{item?.productId?.name}</h4>
-                    <p className="text-sm text-gray-600">₹{item?.productId?.price}</p>
+                    <h4 className="text-lg font-medium">{item?.productId?.name || 'Product Name'}</h4>
+                    {item?.productId?.discount ? (
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm text-gray-900 font-semibold">
+                          ₹{item?.productId?.price - (item?.productId?.price * item?.productId?.discount) / 100}
+                        </p>
+                        <p className="text-sm text-gray-500 line-through">
+                          ₹{item?.productId?.price}
+                        </p>
+                        <p className="text-xs text-green-600 font-medium">
+                          ({item?.productId?.discount}% OFF)
+                        </p>
+                      </div>
+                    ) : (
+                      <p className="text-sm text-gray-900 font-semibold">₹{item?.productId?.price || '0'}</p>
+                    )}
                     <div className="mt-1">
                       <input
                         type="number"

@@ -17,7 +17,7 @@ const validationSchema = Yup.object({
   message: Yup.string().required('Message is required'),
 });
 
-export function ContactUsForm() {
+const ContactUsForm=()=> {
   const initialValues = { name: '', email: '', phone: '', message: '' };
 
   const handleSubmit = async (values, { resetForm, setSubmitting }) => {
@@ -97,3 +97,5 @@ export function ContactUsForm() {
     </div>
   );
 }
+
+export default ContactUsForm;

@@ -148,7 +148,7 @@ const UserInfo = () => {
               />
             ) : (
               <p className="text-stark-white-900 font-medium">
-                {profile.data.user.name}
+                {profile?.data?.user?.name}
               </p>
             )}
           </div>
@@ -168,7 +168,7 @@ const UserInfo = () => {
               />
             ) : (
               <p className="text-stark-white-900 font-medium">
-                {profile.data.user.phoneNumber || 'Not provided'}
+                {profile?.data?.user?.phoneNumber || 'Not provided'}
               </p>
             )}
           </div>
@@ -177,12 +177,12 @@ const UserInfo = () => {
           <div className="grid gap-2">
             <Label className="text-deep-green">Email</Label>
             <p className="text-stark-white-900 font-medium">
-              {profile.data.user.email}
+              {profile?.data?.user?.email}
             </p>
           </div>
 
           {/* Premium Info */}
-          {profile.data.user.isPremium && (
+          {profile?.data?.user?.isPremium && (
             <div className="p-4 rounded-lg bg-gradient-to-r from-pale-teal to-mint-cream border border-light-teal">
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-full bg-sea-green/10">
@@ -192,9 +192,9 @@ const UserInfo = () => {
                   <p className="font-semibold text-deep-green">
                     Premium Member
                   </p>
-                  {profile.data.user.premiumDiscount && (
+                  {profile?.data?.user?.premiumDiscount && (
                     <p className="text-sm text-teal-green mt-1">
-                      Enjoy {profile.data.user.premiumDiscount}% discount on all purchases
+                      Enjoy {profile?.data?.user?.premiumDiscount}% discount on all purchases
                     </p>
                   )}
                 </div>
