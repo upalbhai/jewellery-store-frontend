@@ -9,6 +9,7 @@ import {
   FaMapMarkerAlt,
 } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const userNavItems = [
   { name: 'User Info', icon: FaUser, path: '/profile' },
@@ -20,8 +21,9 @@ const userNavItems = [
 
 const UserProfileLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-const {user} = useSelector((state)=>state.auth)
-  const toggleSidebar = () => setSidebarOpen(prev => !prev);
+  const { user } = useSelector((state) => state.auth);
+
+  const toggleSidebar = () => setSidebarOpen((prev) => !prev);
 
   return (
     <div className="flex h-screen bg-stark-white-50 text-deep-green">
@@ -38,23 +40,29 @@ const {user} = useSelector((state)=>state.auth)
           </button>
         </div>
         <nav className="space-y-4">
-          {userNavItems.map(({ name, icon: Icon, path }) => (
-            <NavLink
-              key={name}
-              to={path}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-2 rounded-lg transition ${
-                  isActive
-                    ? 'bg-forest-green text-white'
-                    : 'hover:bg-grayish-teal text-deep-green'
-                }`
-              }
-              onClick={() => setSidebarOpen(false)}
-            >
-              <Icon />
-              <span>{name}</span>
-            </NavLink>
-          ))}
+          {user ? (
+            userNavItems.map(({ name, icon: Icon, path }) => (
+              <NavLink
+                key={name}
+                to={path}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-4 py-2 rounded-lg transition ${
+                    isActive
+                      ? 'bg-forest-green text-white'
+                      : 'hover:bg-grayish-teal text-deep-green'
+                  }`
+                }
+                onClick={() => setSidebarOpen(false)}
+              >
+                <Icon />
+                <span>{name}</span>
+              </NavLink>
+            ))
+          ) : (
+            Array.from({ length: 5 }).map((_, i) => (
+              <Skeleton  key={i} className="bg-gray-400 h-10 w-full rounded-md" />
+            ))
+          )}
         </nav>
       </aside>
 
@@ -66,13 +74,17 @@ const {user} = useSelector((state)=>state.auth)
             <button className="md:hidden text-xl" onClick={toggleSidebar}>
               <FaBars />
             </button>
-            <h1 className="text-xl font-semibold">Welcome, {user?.name}</h1>
+            {user?.name ? (
+              <h1 className="text-xl font-semibold">Welcome, {user.name}</h1>
+            ) : (
+              <Skeleton className="bg-gray-400 h-6 w-40 rounded-md" />
+            )}
           </div>
         </header>
 
         {/* Outlet for routed content */}
         <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-off-white">
-          <Outlet />
+          {user ? <Outlet /> : <Skeleton className="bg-gray-400 h-[500px] w-full rounded-md" />}
         </main>
       </div>
     </div>

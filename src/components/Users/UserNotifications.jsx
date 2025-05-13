@@ -14,6 +14,7 @@ import {
   DialogClose
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const UserNotifications = () => {
   const [notifications, setNotifications] = useState([]);
@@ -120,6 +121,21 @@ const UserNotifications = () => {
     }
   };
 
+  // Skeleton loading component
+  const NotificationSkeleton = () => (
+    <div className="p-4 border rounded-lg bg-off-white border-gray-200 space-y-3">
+      <Skeleton className="h-5 w-3/4 bg-gray-400" />
+      <Skeleton className="h-4 w-full bg-gray-400" />
+      <div className="flex justify-between items-center">
+        <Skeleton className="h-3 w-1/3 bg-gray-400" />
+        <div className="flex space-x-2">
+          <Skeleton className="h-8 w-24 bg-gray-400" />
+          <Skeleton className="h-8 w-20 bg-gray-400" />
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className="max-w-4xl mx-auto p-4">
       <div className="flex justify-between items-center mb-6">
@@ -132,7 +148,7 @@ const UserNotifications = () => {
             Mark All as Read
           </Button>
           
-          <Dialog  open={openDeleteDialog} onOpenChange={setOpenDeleteDialog}>
+          <Dialog open={openDeleteDialog} onOpenChange={setOpenDeleteDialog}>
             <DialogTrigger asChild>
               <Button className='bg-red-700 border-2 border-red-900 text-off-white' variant="destructive">
                 Delete All
@@ -187,8 +203,10 @@ const UserNotifications = () => {
       </div>
 
       {loading ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-sea-green"></div>
+        <div className="space-y-4">
+          {[...Array(5)].map((_, index) => (
+            <NotificationSkeleton key={index} />
+          ))}
         </div>
       ) : notifications.length === 0 ? (
         <div className="text-center py-10 text-gray-500">

@@ -9,6 +9,8 @@ const api = axios.create({
   withCredentials: true, // important for cookies
 });
 
+console.log('api',api)
+
 // Intercept responses to catch expired token
 api.interceptors.response.use(
   (res) => res,
@@ -18,9 +20,9 @@ api.interceptors.response.use(
     if (status === 401 || status === 403) {
       toast.error('Session expired. Please log in again.');
       store.dispatch(logout());
-      setTimeout(() => {
-        window.location.href = '/login';
-      }, 1000);
+      // setTimeout(() => {
+      //   window.location.href = '/login';
+      // }, 1000);
     }
 
     return Promise.reject(error);

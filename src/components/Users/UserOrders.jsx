@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { downdOrderReceipt, getOrdersForCustomers } from '@/core/requests';
 import { Input } from '@/components/ui/input';
 import {
@@ -9,11 +9,11 @@ import {
   PaginationLink,
   PaginationNext,
 } from '@/components/ui/pagination';
-import { debounce } from 'lodash';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
 import { useNavigate } from 'react-router-dom';
 import DownloadLoader from '../DownloadLoader';
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -21,9 +21,7 @@ const Orders = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalOrders, setTotalOrders] = useState(0);
-const navigate = useNavigate();
-
-
+  const navigate = useNavigate();
 
   const fetchOrders = async () => {
     try {
@@ -40,10 +38,9 @@ const navigate = useNavigate();
     }
   };
 
-
   useEffect(() => {
     fetchOrders();
-  }, [ page]);
+  }, [page]);
 
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState(0);
@@ -68,21 +65,14 @@ const navigate = useNavigate();
 
     try {
       const response = await downdOrderReceipt(orderId);
-      
-      // Create blob from arraybuffer
       const blob = new Blob([response], { type: 'application/pdf' });
       const url = window.URL.createObjectURL(blob);
-      
-      // Create download link
       const link = document.createElement('a');
       link.href = url;
       link.download = `receipt_${orderId}.pdf`;
-      
-      // Append to body and trigger download
       document.body.appendChild(link);
       link.click();
       
-      // Cleanup
       setTimeout(() => {
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
@@ -98,7 +88,6 @@ const navigate = useNavigate();
     }
   };
 
-  // Generate pagination items
   const renderPaginationItems = () => {
     const items = [];
     const maxVisiblePages = 5;
@@ -115,7 +104,6 @@ const navigate = useNavigate();
       }
     }
 
-    // Previous button
     items.push(
       <PaginationItem key="prev">
         <PaginationPrevious 
@@ -128,7 +116,6 @@ const navigate = useNavigate();
       </PaginationItem>
     );
 
-    // First page
     if (startPage > 1) {
       items.push(
         <PaginationItem key={1}>
@@ -139,7 +126,6 @@ const navigate = useNavigate();
             }}
             isActive={1 === page}
             className="cursor-pointer"
-
           >
             1
           </PaginationLink>
@@ -154,7 +140,6 @@ const navigate = useNavigate();
       }
     }
 
-    // Page numbers
     for (let i = startPage; i <= endPage; i++) {
       items.push(
         <PaginationItem key={i}>
@@ -171,7 +156,6 @@ const navigate = useNavigate();
       );
     }
 
-    // Last page
     if (endPage < totalPages) {
       if (endPage < totalPages - 1) {
         items.push(
@@ -196,7 +180,6 @@ const navigate = useNavigate();
       );
     }
 
-    // Next button
     items.push(
       <PaginationItem key="next">
         <PaginationNext
@@ -212,23 +195,54 @@ const navigate = useNavigate();
     return items;
   };
 
+  // Skeleton loading component
+  const OrderRowSkeleton = () => (
+    <TableRow>
+      <TableCell><Skeleton className="h-4 w-[120px] bg-gray-400" /></TableCell>
+      <TableCell><Skeleton className="h-4 w-[80px] bg-gray-400" /></TableCell>
+      <TableCell><Skeleton className="h-4 w-[100px] bg-gray-400" /></TableCell>
+      <TableCell><Skeleton className="h-4 w-[100px] bg-gray-400" /></TableCell>
+      <TableCell><Skeleton className="h-4 w-[100px] bg-gray-400" /></TableCell>
+    </TableRow>
+  );
+
   return (
     <div className="p-6 space-y-6">
       <h1 className="text-2xl font-bold">Orders Management</h1>
       
-      {/* Search and Filters */}
       {isDownloading && (
         <DownloadLoader 
-        isVisible={isDownloading} 
-        progress={downloadProgress} 
-      />      )}
+          isVisible={isDownloading} 
+          progress={downloadProgress} 
+        />
+      )}
+      
       <div className="text-sm text-deep-green">
-        Total Orders: {totalOrders} | Showing page {page} of {totalPages}
+        {loading ? (
+          <Skeleton className="h-4 w-[200px] bg-gray-400" />
+        ) : (
+          `Total Orders: ${totalOrders} | Showing page ${page} of ${totalPages}`
+        )}
       </div>
 
       {loading ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-teal-green"></div>
+        <div className="overflow-x-auto rounded-lg border border-stark-white-200 shadow">
+          <Table>
+            <TableHeader className="bg-pale-teal text-deep-green">
+              <TableRow>
+                <TableHead>Order ID</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Payment</TableHead>
+                <TableHead>Date</TableHead>
+                <TableHead>Download Receipts</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {[...Array(5)].map((_, index) => (
+                <OrderRowSkeleton key={index} />
+              ))}
+            </TableBody>
+          </Table>
         </div>
       ) : orders?.length === 0 ? (
         <div className="text-center py-12 text-stark-white-500">
@@ -279,8 +293,6 @@ const navigate = useNavigate();
         </div>
       )}
 
-
-      {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex justify-center mt-6">
           <Pagination>

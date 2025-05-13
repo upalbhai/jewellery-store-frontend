@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getFeaturePost } from '@/core/requests';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const FeaturedProducts = () => {
   const { data, isLoading, isError } = useQuery({
@@ -12,10 +13,21 @@ const FeaturedProducts = () => {
 
   const navigate = useNavigate();
 
+  const productsByCategory = data?.data;
+
   if (isLoading) {
     return (
-      <div className="text-center py-10 text-[color:var(--color-deep-green)]">
-        Loading featured products...
+      <div className="space-y-12 px-4 sm:px-6 lg:px-12 py-8 bg-[color:var(--color-off-white)]">
+        {[...Array(2)].map((_, i) => (
+          <div key={i}>
+            <Skeleton className="h-6 w-48 mb-4 bg-gray-400 rounded-md" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+              {[...Array(4)].map((_, j) => (
+                <Skeleton key={j} className=" bg-gray-400 h-72 w-full rounded-xl" />
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
     );
   }
@@ -28,22 +40,20 @@ const FeaturedProducts = () => {
     );
   }
 
-  const productsByCategory = data?.data;
-
   return (
     <div className="space-y-12 px-4 sm:px-6 lg:px-12 py-8 bg-[color:var(--color-off-white)]">
-      {Object.entries(productsByCategory).map(([category, products]) => (
+      {Object.entries(productsByCategory || {}).map(([category, products]) => (
         <div key={category}>
           <h2 className="text-2xl font-bold mb-6 text-[color:var(--color-deep-green)] border-l-4 pl-4 border-[color:var(--color-stark-white-600)] capitalize">
             {category}
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
-            {products.map((product) => {
-              const hasDiscount = product.discount > 0;
+            {(products || []).map((product) => {
+              const hasDiscount = product?.discount > 0;
               const discountedPrice = hasDiscount
-                ? (product.price * (1 - product.discount / 100)).toFixed(2)
-                : product.price.toFixed(2);
+                ? (product?.price * (1 - product?.discount / 100)).toFixed(2)
+                : product?.price?.toFixed(2);
 
               return (
                 <motion.div
@@ -51,7 +61,7 @@ const FeaturedProducts = () => {
                   whileTap={{ scale: 0.97 }}
                   transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                   onClick={() => navigate(`/product/${product?._id}`)}
-                  key={product._id}
+                  key={product?._id}
                   className={`cursor-pointer relative rounded-xl shadow-md p-4 flex flex-col border ${
                     hasDiscount
                       ? 'border-red-400 bg-red-50'
@@ -61,7 +71,7 @@ const FeaturedProducts = () => {
                   {/* Discount Ribbon */}
                   {hasDiscount && (
                     <span className="absolute top-2 left-2 bg-red-500 text-white text-xs z-10 font-bold px-2 py-1 rounded shadow">
-                      {product.discount}% OFF
+                      {product?.discount}% OFF
                     </span>
                   )}
 
@@ -90,7 +100,7 @@ const FeaturedProducts = () => {
                     {product?.description}
                   </p>
 
-                  {/* Price Section */}
+                  {/* Price */}
                   <div className="mt-auto pt-3 flex justify-between items-center">
                     <div className="flex flex-col">
                       <span className="text-base font-bold text-[color:var(--color-stark-white-700)]">
@@ -98,7 +108,7 @@ const FeaturedProducts = () => {
                       </span>
                       {hasDiscount && (
                         <span className="text-sm line-through text-gray-500">
-                          ${product?.price.toFixed(2)}
+                          ${product?.price?.toFixed(2)}
                         </span>
                       )}
                     </div>

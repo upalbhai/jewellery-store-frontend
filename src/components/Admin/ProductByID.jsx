@@ -82,13 +82,13 @@ const ProductByID = () => {
   if (isLoading) {
     return (
       <div className="p-6 space-y-6">
-        <Skeleton className="h-8 w-48 mb-6" />
+        <Skeleton className="h-8 w-48 mb-6 bg-gray-400" />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-4">
-            <Skeleton className="h-64 w-full rounded-lg" />
+            <Skeleton className="h-64 w-full rounded-lg bg-gray-700" />
             <div className="grid grid-cols-3 gap-2">
               {[...Array(3)].map((_, i) => (
-                <Skeleton key={i} className="h-20 w-full rounded-lg" />
+                <Skeleton key={i} className="h-20 w-full rounded-lg bg-gray-900" />
               ))}
             </div>
           </div>
@@ -235,7 +235,7 @@ const ProductByID = () => {
               </div>
 
               <Button
-                variant="outline" className='bg-red-600 text-white'
+                variant="outline" className='mb-4 bg-red-600 text-white'
                 onClick={handleRemoveDiscount}
                 disabled={removeDiscountMutation.isPending || !product.discount}
               >
