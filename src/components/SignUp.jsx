@@ -20,6 +20,25 @@ const Signup = () => {
     },
   });
 
+  const [passwordRules, setPasswordRules] = useState({
+    minLength: false,
+    uppercase: false,
+    lowercase: false,
+    number: false,
+    specialChar: false,
+  });
+  
+  const updatePasswordRules = (password) => {
+    setPasswordRules({
+      minLength: password.length >= 8,
+      uppercase: /[A-Z]/.test(password),
+      lowercase: /[a-z]/.test(password),
+      number: /[0-9]/.test(password),
+      specialChar: /[^A-Za-z0-9]/.test(password),
+    });
+  };
+  
+
   const [errors, setErrors] = useState({
     name: '',
     email: '',
@@ -50,14 +69,17 @@ const Signup = () => {
         else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) error = 'Invalid email format';
         break;
         
-      case 'password':
-        if (!value) error = 'Password is required';
-        else if (value.length < 8) error = 'Password must be at least 8 characters';
-        else if (!/[A-Z]/.test(value)) error = 'Password must contain at least one uppercase letter';
-        else if (!/[a-z]/.test(value)) error = 'Password must contain at least one lowercase letter';
-        else if (!/[0-9]/.test(value)) error = 'Password must contain at least one number';
-        else if (!/[^A-Za-z0-9]/.test(value)) error = 'Password must contain at least one special character';
-        break;
+        case 'password':
+          const rules = [
+            value.length >= 8,
+            /[A-Z]/.test(value),
+            /[a-z]/.test(value),
+            /[0-9]/.test(value),
+            /[^A-Za-z0-9]/.test(value),
+          ];
+          if (!value) error = 'Password is required';
+          else if (rules.includes(false)) error = 'Password does not meet all requirements';
+          break;
         
       case 'phoneNumber':
         if (!value) error = 'Phone number is required';
@@ -84,6 +106,11 @@ const Signup = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    if (name === 'password') {
+      updatePasswordRules(value);
+    }
+    
     
     // Clear error when user starts typing
     if (name in errors) {
@@ -104,6 +131,26 @@ const Signup = () => {
       setFormData(prev => ({ ...prev, [name]: value }));
     }
   };
+  const PasswordRequirements = () => (
+    <ul className="text-sm mt-2 space-y-1">
+      <li className={passwordRules.minLength ? 'text-green-600' : 'text-red-600'}>
+        {passwordRules.minLength ? '✔' : '✘'} At least 8 characters
+      </li>
+      <li className={passwordRules.uppercase ? 'text-green-600' : 'text-red-600'}>
+        {passwordRules.uppercase ? '✔' : '✘'} At least one uppercase letter
+      </li>
+      <li className={passwordRules.lowercase ? 'text-green-600' : 'text-red-600'}>
+        {passwordRules.lowercase ? '✔' : '✘'} At least one lowercase letter
+      </li>
+      <li className={passwordRules.number ? 'text-green-600' : 'text-red-600'}>
+        {passwordRules.number ? '✔' : '✘'} At least one number
+      </li>
+      <li className={passwordRules.specialChar ? 'text-green-600' : 'text-red-600'}>
+        {passwordRules.specialChar ? '✔' : '✘'} At least one special character
+      </li>
+    </ul>
+  );
+  
 
   const handleBlur = (e) => {
     const { name, value } = e.target;
@@ -187,6 +234,8 @@ const Signup = () => {
                     errors[field] ? 'border-red-500' : 'border-stark-white-300'
                   } focus:outline-none focus:ring-2 focus:ring-stark-white-500`}
                 />
+                    {field === 'password' && <PasswordRequirements />}
+
                 {errors[field] && (
                   <p className="mt-1 text-sm text-red-600">{errors[field]}</p>
                 )}
