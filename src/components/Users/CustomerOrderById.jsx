@@ -9,12 +9,9 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const PRODUCTS_PER_PAGE = 2;
-
-const SkeletonCard = () => (
-  <div className="border rounded p-4 animate-pulse bg-gray-400 h-32" />
-);
 
 const CustomerOrderById = () => {
   const { id: orderId } = useParams();
@@ -31,18 +28,34 @@ const CustomerOrderById = () => {
     enabled: !!orderId,
   });
 
+  const order = data?.data;
+  const products = order?.products || [];
+  const totalPages = Math.ceil(products.length / PRODUCTS_PER_PAGE);
+  const paginatedProducts = products.slice(
+    (page - 1) * PRODUCTS_PER_PAGE,
+    page * PRODUCTS_PER_PAGE
+  );
+
   if (isLoading) {
     return (
-      <div className="p-6 bg-white rounded-md shadow-md space-y-6 max-w-4xl mx-auto">
-      <div className="p-4 space-y-4">
-        <div className="h-6 bg-gray-400 rounded w-1/3 animate-pulse" />
-        <div className="h-4 bg-gray-400 rounded w-1/4 animate-pulse" />
-        <div className="h-4 bg-gray-400 rounded w-1/4 animate-pulse" />
-        <SkeletonCard />
-        <SkeletonCard />
-        <SkeletonCard />
+      <div className="p-6 space-y-4 bg-gray-200 max-w-4xl mx-auto">
+        <Skeleton className="h-6 w-1/3 bg-gray-300" />
+        <Skeleton className="h-4 w-1/4 bg-gray-300" />
+        <Skeleton className="h-4 w-1/4 bg-gray-300" />
+        <Skeleton className="h-4 w-1/4 bg-gray-300" />
+        <Skeleton className="h-4 w-1/4 bg-gray-300" />
+        {[...Array(PRODUCTS_PER_PAGE)].map((_, index) => (
+          <div key={index} className="flex gap-4 items-center">
+            <Skeleton className="h-24 w-24 rounded bg-gray-300" />
+            <div className="flex-1 space-y-2">
+              <Skeleton className="h-4 w-1/2 bg-gray-400" />
+              <Skeleton className="h-4 w-1/3 bg-gray-400" />
+              <Skeleton className="h-4 w-1/4 bg-gray-400" />
+              <Skeleton className="h-4 w-1/4 bg-gray-400" />
+            </div>
+          </div>
+        ))}
       </div>
-</div>
     );
   }
 
@@ -53,14 +66,6 @@ const CustomerOrderById = () => {
       </div>
     );
   }
-
-  const order = data?.data;
-  const products = order?.products || [];
-  const totalPages = Math.ceil(products.length / PRODUCTS_PER_PAGE);
-  const paginatedProducts = products.slice(
-    (page - 1) * PRODUCTS_PER_PAGE,
-    page * PRODUCTS_PER_PAGE
-  );
 
   return (
     <div className="p-6 bg-white rounded-md shadow-md space-y-6 max-w-4xl mx-auto">

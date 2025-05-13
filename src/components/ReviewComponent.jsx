@@ -18,7 +18,7 @@ const ReviewComponent = ({ productId }) => {
   const { user } = useSelector((state) => state.auth);
 
   // Fetch Reviews with Pagination
-  const { data, isLoading } = useQuery({
+  const { data, isPending } = useQuery({
     queryKey: ['reviews', productId, page],
     queryFn: () => getAllReviews(productId, page, limit),
     keepPreviousData: true,
@@ -34,7 +34,6 @@ const ReviewComponent = ({ productId }) => {
     },
     onError: (error) => toast.error(error?.response?.data?.error?.message ||'Failed to post review'),
   });
-
   const editMutation = useMutation({
     mutationFn: ({ reviewId, text, rating }) => editReview({ reviewId, content: text, rating }),
     onSuccess: () => {
@@ -55,6 +54,7 @@ const ReviewComponent = ({ productId }) => {
     },
     onError: () => toast.error('Failed to delete review'),
   });
+
 
   const handlePostReview = () => {
     if (!reviewText.trim()) return toast.error('Review cannot be empty');
@@ -97,19 +97,38 @@ const ReviewComponent = ({ productId }) => {
     </div>
 
     <button
-      onClick={handlePostReview}
-      className="mt-3 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors shadow-sm font-medium disabled:opacity-50"
-      disabled={!reviewText || !rating}
-    >
-      Post Review
-    </button>
+  onClick={handlePostReview}
+  className="mt-3 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors shadow-sm font-medium disabled:opacity-50 flex items-center justify-center"
+  disabled={!reviewText || !rating || createMutation.isPending}
+>
+  {createMutation.isPending ? (
+    <span className="animate-spin mr-2 w-4 h-4 border-2 border-white border-t-transparent rounded-full"></span>
+  ) : null}
+  {createMutation.isPending ? 'Posting...' : 'Post Review'}
+</button>
+
   </div>
 
   {/* Review List */}
-  {isLoading ? (
-    <div className="flex justify-center py-8">
-      <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
-    </div>
+  {isPending ? (
+    <div className="space-y-4">
+    {[...Array(3)].map((_, i) => (
+      <div
+        key={i}
+        className="animate-pulse p-4 border border-gray-200 rounded-lg bg-white space-y-3"
+      >
+        <div className="h-4 bg-gray-200 rounded w-1/3"></div>
+        <div className="flex space-x-2">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="h-4 w-4 bg-gray-200 rounded"></div>
+          ))}
+        </div>
+        <div className="h-3 bg-gray-100 rounded w-full"></div>
+        <div className="h-3 bg-gray-100 rounded w-5/6"></div>
+        <div className="h-3 bg-gray-100 rounded w-2/3"></div>
+      </div>
+    ))}
+  </div>
   ) : (
     <div className="space-y-5">
       {
@@ -171,12 +190,17 @@ const ReviewComponent = ({ productId }) => {
                       </div>
                     </div>
                     <div className="flex space-x-3">
-                      <button
-                        onClick={handleUpdateReview}
-                        className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors font-medium"
-                      >
-                        Save Changes
-                      </button>
+                    <button
+  onClick={handleUpdateReview}
+  className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors font-medium disabled:opacity-50 flex items-center justify-center"
+  disabled={editMutation.isPending}
+>
+  {editMutation.isPending ? (
+    <span className="animate-spin mr-2 w-4 h-4 border-2 border-white border-t-transparent rounded-full"></span>
+  ) : null}
+  {editMutation.isPending ? 'Saving...' : 'Save Changes'}
+</button>
+
                       <button
                         onClick={() => setEditingId(null)}
                         className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors font-medium"
@@ -204,12 +228,18 @@ const ReviewComponent = ({ productId }) => {
                     <FiEdit className="text-lg" />
                   </button>
                   <button
-                    onClick={() => deleteMutation.mutate(review._id)}
-                    className="text-red-600 hover:text-red-800 p-2 rounded-full hover:bg-red-50 transition-colors"
-                    title="Delete"
-                  >
-                    <FiTrash className="text-lg" />
-                  </button>
+  onClick={() => deleteMutation.mutate(review._id)}
+  className="text-red-600 hover:text-red-800 p-2 rounded-full hover:bg-red-50 transition-colors"
+  title="Delete"
+  disabled={deleteMutation.isPending}
+>
+  {deleteMutation.isPending ? (
+    <span className="animate-spin w-4 h-4 border-2 border-red-600 border-t-transparent rounded-full block mx-auto"></span>
+  ) : (
+    <FiTrash className="text-lg" />
+  )}
+</button>
+
                 </div>
               )}
             </div>
