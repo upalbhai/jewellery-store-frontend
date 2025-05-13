@@ -173,7 +173,7 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent>
             {loading ? (
-              <Skeleton className="h-[300px] w-full" />
+              <Skeleton className="bg-slate-300 h-[300px] w-full" />
             ) : (
               <BarChart
                 data={topProductsChartData}
@@ -193,7 +193,7 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent>
             {loading ? (
-              <Skeleton className="h-[300px] w-full" />
+              <Skeleton className="bg-slate-300 h-[300px] w-full" />
             ) : (
               <PieChart
                 data={topCategoriesChartData}
@@ -219,7 +219,7 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent>
             {loading ? (
-              <Skeleton className="h-[300px] w-full" />
+              <Skeleton className="bg-slate-300 h-[300px] w-full" />
             ) : (
               <div className="space-y-4">
                 {stats?.topCostlyOrders?.map((order, index) => (
@@ -247,7 +247,7 @@ const Dashboard = () => {
   </CardHeader>
   <CardContent>
     {loading ? (
-      <Skeleton className="h-[300px] w-full" />
+      <Skeleton className="bg-slate-300 h-[300px] w-full" />
     ) : (
       <ScrollArea className="h-[300px]">
         <div className="space-y-4">
@@ -338,7 +338,7 @@ const SummaryCard = ({
       </CardHeader>
       <CardContent>
         {loading ? (
-          <Skeleton className="h-8 w-3/4" />
+          <Skeleton className="bg-slate-300 h-8 w-3/4" />
         ) : (
           <>
             <div className="text-2xl font-bold text-deep-green">
