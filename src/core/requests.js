@@ -1,5 +1,5 @@
 import axios from "axios";
-import { BASE_URL, ORDERS, PRODUCT, REVIEW, USER } from "./consts";
+import { ADMIN_SETTINGS, BASE_URL, ORDERS, PRODUCT, REVIEW, USER } from "./consts";
 import api from "./api";
 import socket from "./socket";
 
@@ -363,5 +363,22 @@ export const downdOrderReceipt = async (orderId) => {
       withCredentials: true,
     }
   );
+  return response.data;
+};
+
+export const getAdminSettings = async()=>{
+  const response = await axios.get(`${BASE_URL}${ADMIN_SETTINGS.GET}`,{
+    withCredentials:true,
+  })
+  return response.data;
+}
+
+export const updateAdminSettings = async (formData) => {
+  const response = await axios.put(`${BASE_URL}${ADMIN_SETTINGS.GET}`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    withCredentials: true,
+  });
   return response.data;
 };

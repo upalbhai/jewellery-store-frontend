@@ -11,6 +11,8 @@ import {
   FaHome,
   FaTags,
 } from 'react-icons/fa';
+import { IoMdSettings } from "react-icons/io";
+
 import LogoutButton from '@/components/Logout';
 
 const navItems = [
@@ -20,6 +22,7 @@ const navItems = [
   { name: 'Orders', icon: FaGem, path: '/admin/orders' },
   { name: 'Custom Orders', icon: FaGem, path: '/admin/custom-orders' },
   { name: 'Customers', icon: FaUsers, path: '/admin/customers' },
+  { name: 'Settings', icon: IoMdSettings, path: '/admin/settings' },
   // { name: 'Reviews', icon: FaStar, path: '/admin/reviews' },
   // { name: 'Settings', icon: FaCog, path: '/admin/settings' },
 ];

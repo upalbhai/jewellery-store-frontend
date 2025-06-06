@@ -14,6 +14,7 @@ const ProductByID = lazy(() => import('@/components/Admin/ProductByID'));
 const CustomOrders = lazy(() => import('@/components/Admin/CustomOrders'));
 const CustomOrderById = lazy(() => import('@/components/Admin/CustomOrderById'));
 const OrderById = lazy(() => import('@/components/Admin/OrderById'));
+const AdminSettings = lazy(() => import('@/components/Admin/AdminSettings'));
 
 const AdminRoutes = () => {
   const { user } = useSelector((state) => state.auth);
@@ -28,6 +29,7 @@ const AdminRoutes = () => {
         <Route path="/" element={<Admin />}>
           <Route index element={<Dashboard />} />
           <Route path="products" element={<Products />} />
+          <Route path="settings" element={<AdminSettings />} />
           <Route path="customers" element={<Customers />} />
           <Route path="customer/:id" element={<CustomerById />} />
           <Route path="product/:id" element={<ProductByID />} />

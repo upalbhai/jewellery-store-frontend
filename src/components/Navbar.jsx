@@ -15,7 +15,8 @@ const Navbar = () => {
   const { user, cart } = useSelector((state) => state.auth);
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
-
+const { settingData, isMobile} = useSelector((state) => state.settings); // ✅ Correct
+console.log(isMobile)
   const handleToggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
@@ -24,12 +25,13 @@ const Navbar = () => {
     <nav className="bg-off-white text-deep-green shadow-sm fixed w-full z-50 border-b border-stark-white-50">
       <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
         {/* Logo */}
-        <Link
+        {/* <Link
           to="/"
           className="text-2xl font-bold text-deep-green hover:text-stark-white-600 transition-colors"
         >
-          Madhusudhan Ratnam
-        </Link>
+          {settingData?.name}
+        </Link> */}
+        <img alt={settingData?.name} className='h-10' src={`${import.meta.env.VITE_API_URL}/uploads/Admin/${!isMobile ? settingData?.logo : settingData?.mo_logo}`} /> 
 
         {/* Desktop Menu */}
         

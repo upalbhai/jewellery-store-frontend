@@ -59,3 +59,7 @@ export const DASHBOARD = {
     DASHBOARD_STATS:"/dashboard",
     DASHBOARD_SALES:"/dashboard/sales"
 }
+
+export const ADMIN_SETTINGS = {
+    GET:"/admin-settings"
+}
